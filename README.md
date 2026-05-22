@@ -10,6 +10,7 @@ Phase 1 MVP for posting Azure DevOps due-today tickets into Microsoft Teams.
 - Excludes tickets already in `QA`, `Resolved`, `Closed`, or `Removed`
 - Posts the list in Teams through:
   - bot command
+  - group chat proactive post
   - scheduled daily post
 
 ## Important
@@ -37,6 +38,9 @@ AZURE_DEVOPS_PAT=your_pat
 MICROSOFT_APP_ID=your_bot_app_id
 MICROSOFT_APP_PASSWORD=your_bot_password
 ```
+
+`MICROSOFT_APP_ID` is the Azure Bot app/client ID. The same ID is used in
+the Teams app manifest unless you set `TEAMS_APP_ID`.
 
 ---
 
@@ -186,20 +190,76 @@ Use this endpoint in the Azure Bot configuration.
 
 ---
 
+## Build and install the Teams app
+
+Generate the Teams app zip after `MICROSOFT_APP_ID` is set:
+
+```bash
+npm run teams:package
+```
+
+This creates:
+
+```txt
+dist/teams-app/SprintOpsTeamsAgent.zip
+```
+
+In Microsoft Teams:
+
+1. Open the target group chat.
+2. Add an app / upload a custom app.
+3. Select `dist/teams-app/SprintOpsTeamsAgent.zip`.
+4. Mention the bot and send:
+
+```txt
+@SprintOps subscribe
+```
+
+That stores the group chat conversation reference locally at
+`CONVERSATION_STORE_PATH`. Proactive posts use that saved reference.
+
+---
+
 ## Teams commands
 
 ```txt
 subscribe
 due today
+post due today
 help
 ```
 
-Use `subscribe` once in the Teams channel where the bot should post daily updates.
+Use `subscribe` once in the Teams group chat or channel where the bot should
+post daily updates.
 
 Then test:
 
 ```txt
 due today
+```
+
+---
+
+## Push the due-today card on demand
+
+After the group chat has subscribed, run:
+
+```bash
+npm run teams:post-due-today
+```
+
+This fetches the same data as:
+
+```bash
+npm run due-today
+```
+
+and posts it as Teams text plus an Adaptive Card in the subscribed group chat.
+
+You can also trigger the same push through the running web app:
+
+```bash
+curl -X POST http://localhost:3978/api/run-daily
 ```
 
 ---
@@ -265,6 +325,8 @@ Included:
 * Target sprint filter
 * State exclusion
 * Teams command response
+* Teams group chat app package
+* Manual proactive post command
 * Scheduled channel post
 
 Not included yet:
