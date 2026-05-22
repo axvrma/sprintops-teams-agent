@@ -1,0 +1,27 @@
+{
+  "name": "sprintops-teams-agent",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "build": "tsc",
+    "fields": "tsx src/findFields.ts",
+    "due-today": "tsx src/runDueToday.ts",
+    "teams:post-due-today": "tsx src/postDueToday.ts",
+    "teams:package": "tsx src/buildTeamsPackage.ts"
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "botbuilder": "^4.23.3",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "node-cron": "^3.0.3"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.2",
+    "@types/node-cron": "^3.0.11",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
